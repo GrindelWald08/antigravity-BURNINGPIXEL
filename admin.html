@@ -219,6 +219,7 @@
               <thead>
                 <tr>
                   <th>Nama Paket</th>
+                  <th>Kategori</th>
                   <th>Harga</th>
                   <th>Diskon</th>
                   <th>Populer</th>
@@ -240,8 +241,17 @@
               
               <form id="package-form">
                 <div class="form-group">
-                  <label for="pkg-name">Nama Paket (Gunakan Prefix Kategori, misal: 'Landing Page - Starter')</label>
-                  <input type="text" id="pkg-name" class="form-control" placeholder="Landing Page - Starter" required>
+                  <label for="pkg-category">Kategori Layanan</label>
+                  <select id="pkg-category" class="form-control" required>
+                    <option value="Landing Page">Landing Page</option>
+                    <option value="Company Profile">Company Profile</option>
+                    <option value="Travel & Tour">Travel & Tour</option>
+                    <option value="Toko Online">Toko Online</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="pkg-name">Nama Paket (Misalnya: 'Starter', 'Growth', 'Ultimate')</label>
+                  <input type="text" id="pkg-name" class="form-control" placeholder="Starter" required>
                 </div>
                 <div class="form-group">
                   <label for="pkg-price">Harga Dasar (IDR)</label>

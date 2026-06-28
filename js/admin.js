@@ -416,6 +416,7 @@ async function loadAdminPackages() {
     tbody.innerHTML = packagesList.map(pkg => `
       <tr>
         <td style="font-weight: 600;">${pkg.name}</td>
+        <td>${pkg.category || '-'}</td>
         <td>${formatPrice(pkg.price)}</td>
         <td>${pkg.discount_percentage}%</td>
         <td>${pkg.is_popular ? 'Ya' : 'Tidak'}</td>
@@ -437,6 +438,7 @@ async function loadAdminPackages() {
           document.getElementById('package-modal-title').textContent = 'Edit Paket Harga';
           document.getElementById('package-submit-btn').textContent = 'Simpan Perubahan';
 
+          document.getElementById('pkg-category').value = pkg.category || 'Landing Page';
           document.getElementById('pkg-name').value = pkg.name;
           document.getElementById('pkg-price').value = pkg.price;
           document.getElementById('pkg-discount').value = pkg.discount_percentage || 0;
@@ -469,6 +471,7 @@ async function loadAdminPackages() {
 async function handleAddPackage(e) {
   e.preventDefault();
 
+  const category = document.getElementById('pkg-category').value;
   const name = document.getElementById('pkg-name').value.trim();
   const price = parseFloat(document.getElementById('pkg-price').value);
   const discount_percentage = parseInt(document.getElementById('pkg-discount').value);
@@ -489,6 +492,7 @@ async function handleAddPackage(e) {
       const { error } = await supabaseClient
         .from('pricing_packages')
         .update({
+          category,
           name,
           price,
           description,
@@ -506,6 +510,7 @@ async function handleAddPackage(e) {
       const { error } = await supabaseClient
         .from('pricing_packages')
         .insert({
+          category,
           name,
           price,
           period: 'proyek',

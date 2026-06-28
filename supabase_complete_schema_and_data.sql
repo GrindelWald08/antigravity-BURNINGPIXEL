@@ -1,6 +1,6 @@
 -- ==========================================
 -- BURNING PIXEL COMPLETE DATABASE SETUP
--- Generated: 2026-06-28T05:22:00.093Z
+-- Generated: 2026-06-28T05:38:25.312Z
 -- ==========================================
 
 -- MIGRATION: 20251224141559_1876b551-3e8d-43a0-9575-1ea3a57785fc.sql
@@ -763,6 +763,33 @@ BEGIN
   END IF;
 END;
 $$;
+
+
+-- MIGRATION: 20260628124000_add_package_category.sql
+------------------------------------------
+-- Alter table pricing_packages to add category column
+ALTER TABLE public.pricing_packages ADD COLUMN IF NOT EXISTS category TEXT;
+
+-- Clear old default pricing packages
+DELETE FROM public.pricing_packages;
+
+-- Insert the 12 default packages with category column
+INSERT INTO public.pricing_packages (id, name, category, price, period, description, features, is_popular, discount_percentage, discount_label, sort_order) VALUES
+('2743cc35-4f90-4730-810c-dacacf0103a8', 'Landing Page - Starter', 'Landing Page', 1500000, '/project', 'Cocok untuk bisnis UMKM baru yang ingin langsung tampil online dengan landing page elegan.', ARRAY['Free Domain .com (1 Tahun)', 'Shared Hosting (1 Tahun)', 'Desain Responsif (Mobile & Desktop)', '1 Halaman Landing Page (scroll panjang)', '1 Email Bisnis', '1 GB Disk Storage', 'Free SSL', '1x Revisi Gratis', 'Garansi Maintenance 15 Hari'], false, 20, 'New Year Sale', 1),
+('88344df3-69a8-4d8d-b863-8f405ead5510', 'Landing Page - Growth', 'Landing Page', 2750000, '/project', 'Buat kamu yang pengen tampil lebih profesional dan punya kontrol lebih atas fitur & brand.', ARRAY['Semua fitur Starter', 'Desain Visual Lebih Kompleks (CTA, Form, Galeri)', 'Direct WhatsApp Chat', '2 Email Bisnis', '10 GB Disk Storage', '3x Revisi Gratis', 'Free SSL', 'SEO On-Page Basic', 'Garansi Maintenance 1 Bulan'], true, 25, 'BEST SELLER', 2),
+('88a55c11-bf5a-4c87-82f1-9d839f3041b6', 'Landing Page - Ultimate', 'Landing Page', 3750000, '/project', 'Solusi landing page all-in-one buat bisnis digital yang pengen konversi tinggi + tampil premium.', ARRAY['Semua fitur Growth', 'Up to 2 Halaman Tambahan (About / FAQ / Blog Preview)', 'Request Fitur Khusus (Popup, Accordion, Pricing Table, dll)', 'Desain Interaktif (Animated Scroll, Parallax, dll)', 'Speed Optimization (Lazy Load + Caching Tools)', '3x Revisi Gratis', 'Garansi Maintenance 1,5 Bulan'], false, 30, 'New Year Sale', 3),
+
+('416e844a-60f7-4837-9b82-20aabfd23db5', 'Company Profile - Starter', 'Company Profile', 2500000, '/project', 'Untuk bisnis yang baru go digital dan butuh online presence yang rapi.', ARRAY['Free Domain (.com)', 'Shared Hosting (1 Tahun)', 'Desain Responsif (Mobile & Desktop)', '3 Halaman Utama (Home, About, Contact)', '1 Email Bisnis', '2 GB Disk Storage', '2x Revisi Gratis', 'Free SSL', 'Form Kontak Langsung ke WhatsApp', 'Garansi Maintenance 15 Hari'], false, 20, 'New Year Sale', 4),
+('50e6c5ef-7eea-45cf-b546-8f287eb64c26', 'Company Profile - Growth', 'Company Profile', 4000000, '/project', 'Untuk bisnis yang ingin tampil lebih profesional dan dipercaya oleh calon klien.', ARRAY['Semua fitur Starter', 'Hosting 1 Tahun', '5–6 Halaman (Home, About, Services, Portfolio/Clients, Contact, FAQ)', '2 Email Bisnis', 'Desain Premium dan Clean', '10 GB Disk Storage', 'Galeri Foto / Testimoni', 'SEO On-Page Dasar', '2x Revisi Gratis', 'Garansi Maintenance 1 Bulan'], true, 25, 'BEST SELLER', 5),
+('d5aeb797-45d8-4bc0-9757-fd2cf615078a', 'Company Profile - Executive', 'Company Profile', 6500000, '/project', 'Untuk perusahaan yang ingin tampil profesional, punya fitur lengkap, dan siap scale ke digital marketing.', ARRAY['Semua fitur Growth', '8–10 Halaman (termasuk Career, Blog, atau Request Khusus)', 'Request Fitur Tambahan (Popup, Accordion, Pricing Table, dll)', 'Integrasi Instagram Feed / YouTube Embed', 'Speed Optimization (Lazy Load + Caching Tools)', 'Desain Interaktif (Parallax, Scroll Animasi)', '3 Email Bisnis', '3x Revisi Gratis', 'Garansi Maintenance 1,5 Bulan'], false, 30, 'New Year Sale', 6),
+
+('6d2f9c9d-6540-4114-98d5-f385b687b268', 'Travel & Tour - Starter', 'Travel & Tour', 2500000, '/project', 'Landing page simpel tapi powerful, fokus langsung ke penawaran paket tour dan WhatsApp booking.', ARRAY['Free Domain (.com)', 'Shared Hosting (1 Tahun)', 'Desain Responsif (Mobile & Desktop)', '1 Halaman Landing Page (scroll panjang)', '1 Email Bisnis', '2 GB Disk Storage', '2x Revisi Gratis', 'Free SSL', 'CTA Booking via WhatsApp per paket', 'Section Detail untuk Tour Packages', 'Harga / Durasi Paket', 'Garansi Maintenance 15 Hari'], false, 25, 'New Year Sale', 7),
+('f47987ff-b270-4949-86b3-f00cb37b3d1d', 'Travel & Tour - Growth', 'Travel & Tour', 5000000, '/project', 'Website lengkap seperti travel agent profesional dan UX yang mendukung eksplorasi wisata.', ARRAY['Semua fitur Starter', 'Hosting 1 Tahun', '5–7 Halaman Utama (Home, About Us, Tour Packages, Gallery, Blog, Contact, Testimonial)', 'Page Individual untuk Setiap Paket', 'Fitur Search / Filter Paket Tour', 'CTA WhatsApp di setiap halaman paket', 'SEO On-Page Basic', '2 Email Bisnis', '10 GB Disk Storage', '3x Revisi Gratis', 'Garansi Maintenance 1 Bulan'], true, 30, 'BEST SELLER', 8),
+('417dfc56-cf70-4e2e-8845-d52b9ddbabb6', 'Travel & Tour - Ultimate', 'Travel & Tour', 12000000, '/project', 'Website profesional + fitur pembayaran langsung di website! Cocok untuk agensi atau bisnis travel skala nasional/internasional.', ARRAY['Semua fitur Growth', 'Integrasi Payment Gateway (Midtrans / Tripay / Xendit / Stripe)', 'Tombol Book & Bayar Sekarang di setiap halaman paket', 'Form Booking Otomatis (Nama, Jadwal, Jumlah Orang, dll)', 'Email Notifikasi Otomatis (ke admin & customer)', 'Fitur Kalender Jadwal Ketersediaan (optional)', 'Desain Interaktif (Parallax, Scroll Animasi)', 'Speed Optimization', '3 Email Bisnis', '5x Revisi Gratis', 'Garansi Maintenance 1,5 Bulan'], false, 30, 'New Year Sale', 9),
+
+('778cc8b4-f79a-4ce0-aa01-4c5e6cb06996', 'Toko Online - Starter', 'Toko Online', 2500000, '/project', 'Cocok untuk brand yang baru mulai jualan online dan butuh halaman jualan simpel tapi langsung bisa closing via WhatsApp.', ARRAY['Free Domain (.com)', 'Shared Hosting (1 Tahun)', 'Desain Responsif (Mobile & Desktop)', '1 Halaman Landing Page (scroll panjang)', '1 Email Bisnis', '2 GB Disk Storage', '2x Revisi Gratis', 'Free SSL', 'Gambar Produk, Harga, Deskripsi Singkat', 'Tombol Beli Sekarang → Direct ke WhatsApp', 'Section Testimoni / FAQ / Promo', 'Garansi Maintenance 15 Hari'], false, 20, 'New Year Sale', 10),
+('88ff9c7a-36ec-4e7c-8e52-9a744362eeab', 'Toko Online - Growth', 'Toko Online', 6000000, '/project', 'Toko online profesional dengan katalog produk, galeri, dan sistem pemesanan via WhatsApp otomatis.', ARRAY['Semua fitur Starter', 'Hosting 1 Tahun', '5–7 Halaman (Home, Shop, About Us, Contact, FAQ, Testimoni, Promo)', 'Katalog Produk Dinamis (20–100 produk)', 'Fitur Search / Filter Produk', 'Tombol Tambah ke Keranjang → Checkout via WhatsApp', 'Desain Custom Kategori Produk', 'SEO On-Page Basic', '2 Email Bisnis', '10 GB Disk Storage', '3x Revisi Gratis', 'Garansi Maintenance 1 Bulan'], true, 25, 'BEST SELLER', 11),
+('8e5448d2-1524-45b5-bb7d-8bb981750496', 'Toko Online - Ultimate', 'Toko Online', 12000000, '/project', 'Toko online full fitur dengan cart system & pembayaran otomatis. Cocok untuk brand yang serius jualan dan siap scaling.', ARRAY['Semua fitur Growth', 'Sistem Keranjang Belanja Otomatis', 'Integrasi Payment Gateway (Midtrans / Tripay / Xendit / Stripe)', 'Metode Pembayaran: Transfer, QRIS, e-Wallet, Credit Card', 'Dashboard Admin (Order, Produk, Stok, Diskon, User, dll)', 'Checkout Otomatis + Email Notifikasi', 'Ongkir Otomatis (via plugin ekspedisi)', 'Mobile Friendly Cart Experience', 'Speed Optimization', '3 Email Bisnis', '5x Revisi Gratis', 'Garansi Maintenance 1,5 Bulan'], false, 30, '', 12);
 
 
 -- ==========================================

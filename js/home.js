@@ -99,15 +99,17 @@ function renderPricingPackages(category) {
   const container = document.getElementById('pricing-container');
   if (!container) return;
 
-  // Filter criteria: match package name prefix
-  let prefix = '';
-  if (category === 'landing-page') prefix = 'landing page';
-  else if (category === 'company-profile') prefix = 'company profile';
-  else if (category === 'travel-tour') prefix = 'travel & tour';
-  else if (category === 'toko-online') prefix = 'toko online';
+  // Filter criteria: match package category directly
+  const categoryMap = {
+    'landing-page': 'Landing Page',
+    'company-profile': 'Company Profile',
+    'travel-tour': 'Travel & Tour',
+    'toko-online': 'Toko Online'
+  };
+  const filterCategory = categoryMap[category] || '';
 
   const filtered = allPackages.filter(pkg => 
-    pkg.name.toLowerCase().includes(prefix)
+    pkg.category === filterCategory
   );
 
   if (filtered.length === 0) {
@@ -120,7 +122,10 @@ function renderPricingPackages(category) {
       ? pkg.price * (1 - pkg.discount_percentage / 100)
       : pkg.price;
 
-    const tierName = pkg.name.split('-')[1]?.trim() || pkg.name;
+    let tierName = pkg.name;
+    if (tierName.includes(' - ')) {
+      tierName = tierName.split(' - ')[1]?.trim();
+    }
 
     return `
       <div class="pricing-card ${pkg.is_popular ? 'popular' : ''} animate-fade-up">
