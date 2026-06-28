@@ -1,6 +1,6 @@
 -- ==========================================
 -- BURNING PIXEL COMPLETE DATABASE SETUP (IDEMPOTENT)
--- Generated: 2026-06-28T05:47:04.804Z
+-- Generated: 2026-06-28T05:51:34.994Z
 -- ==========================================
 
 -- MIGRATION: 20251224141559_1876b551-3e8d-43a0-9575-1ea3a57785fc.sql
@@ -131,13 +131,13 @@ EXECUTE FUNCTION public.update_updated_at_column();
 -- MIGRATION: 20251225233652_2076273e-b2c0-450a-971d-b714331d3113.sql
 ------------------------------------------
 -- Create app role enum
-DO $
+DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'app_role') THEN
     CREATE TYPE public.app_role AS ENUM ('admin', 'moderator', 'user');
   END IF;
 END;
-$;
+$$;
 
 -- Create user_roles table
 CREATE TABLE IF NOT EXISTS public.user_roles (
