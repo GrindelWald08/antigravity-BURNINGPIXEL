@@ -1,6 +1,6 @@
 -- ==========================================
 -- BURNING PIXEL COMPLETE DATABASE SETUP (IDEMPOTENT)
--- Generated: 2026-06-28T05:51:34.994Z
+-- Generated: 2026-06-28T05:54:23.704Z
 -- ==========================================
 
 -- MIGRATION: 20251224141559_1876b551-3e8d-43a0-9575-1ea3a57785fc.sql
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS public.pricing_packages (
 ALTER TABLE public.pricing_packages ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access for pricing display
-CREATE POLICY "Anyone can view pricing packages" 
-ON public.pricing_packages 
+DROP POLICY IF EXISTS "Anyone can view pricing packages" ON public.pricing_packages;
+CREATE POLICY "Anyone can view pricing packages" ON public.pricing_packages 
 FOR SELECT 
 USING (true);
 
@@ -55,8 +55,8 @@ EXECUTE FUNCTION public.update_updated_at_column();
 ------------------------------------------
 -- Add update and delete policies for pricing_packages (admin operations via edge function)
 -- Since we're using password protection, we allow all operations but rely on edge function for auth
-CREATE POLICY "Allow all operations for pricing packages"
-ON public.pricing_packages
+DROP POLICY IF EXISTS "Allow all operations for pricing packages" ON public.pricing_packages;
+CREATE POLICY "Allow all operations for pricing packages" ON public.pricing_packages
 FOR ALL
 USING (true)
 WITH CHECK (true);
@@ -84,33 +84,33 @@ CREATE TABLE IF NOT EXISTS public.portfolio_items (
 ALTER TABLE public.portfolio_items ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access
-CREATE POLICY "Anyone can view portfolio items" 
-ON public.portfolio_items 
+DROP POLICY IF EXISTS "Anyone can view portfolio items" ON public.portfolio_items;
+CREATE POLICY "Anyone can view portfolio items" ON public.portfolio_items 
 FOR SELECT 
 USING (is_visible = true);
 
 -- Allow all operations (admin via password protection)
-CREATE POLICY "Allow all operations for portfolio items"
-ON public.portfolio_items
+DROP POLICY IF EXISTS "Allow all operations for portfolio items" ON public.portfolio_items;
+CREATE POLICY "Allow all operations for portfolio items" ON public.portfolio_items
 FOR ALL
 USING (true)
 WITH CHECK (true);
 
 -- Storage policies for portfolio bucket
-CREATE POLICY "Anyone can view portfolio images"
-ON storage.objects FOR SELECT
+DROP POLICY IF EXISTS "Anyone can view portfolio images" ON storage.objects;
+CREATE POLICY "Anyone can view portfolio images" ON storage.objects FOR SELECT
 USING (bucket_id = 'portfolio');
 
-CREATE POLICY "Allow upload to portfolio bucket"
-ON storage.objects FOR INSERT
+DROP POLICY IF EXISTS "Allow upload to portfolio bucket" ON storage.objects;
+CREATE POLICY "Allow upload to portfolio bucket" ON storage.objects FOR INSERT
 WITH CHECK (bucket_id = 'portfolio');
 
-CREATE POLICY "Allow update portfolio images"
-ON storage.objects FOR UPDATE
+DROP POLICY IF EXISTS "Allow update portfolio images" ON storage.objects;
+CREATE POLICY "Allow update portfolio images" ON storage.objects FOR UPDATE
 USING (bucket_id = 'portfolio');
 
-CREATE POLICY "Allow delete portfolio images"
-ON storage.objects FOR DELETE
+DROP POLICY IF EXISTS "Allow delete portfolio images" ON storage.objects;
+CREATE POLICY "Allow delete portfolio images" ON storage.objects FOR DELETE
 USING (bucket_id = 'portfolio');
 
 -- Insert default portfolio data
@@ -123,8 +123,8 @@ INSERT INTO public.portfolio_items (title, category, description, image_url, lin
 ('Digital Agency', 'Company Profile', 'Creative agency portfolio website', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop', NULL, 6);
 
 -- Create trigger for automatic timestamp updates
-CREATE TRIGGER update_portfolio_items_updated_at
-BEFORE UPDATE ON public.portfolio_items
+DROP TRIGGER IF EXISTS update_portfolio_items_updated_at ON public.portfolio_items;
+CREATE TRIGGER update_portfolio_items_updated_at BEFORE UPDATE ON public.portfolio_items
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -168,20 +168,20 @@ AS $$
 $$;
 
 -- RLS policies for user_roles
-CREATE POLICY "Users can view their own roles"
-ON public.user_roles
+DROP POLICY IF EXISTS "Users can view their own roles" ON public.user_roles;
+CREATE POLICY "Users can view their own roles" ON public.user_roles
 FOR SELECT
 TO authenticated
 USING (user_id = auth.uid());
 
-CREATE POLICY "Admins can view all roles"
-ON public.user_roles
+DROP POLICY IF EXISTS "Admins can view all roles" ON public.user_roles;
+CREATE POLICY "Admins can view all roles" ON public.user_roles
 FOR SELECT
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
-CREATE POLICY "Admins can manage roles"
-ON public.user_roles
+DROP POLICY IF EXISTS "Admins can manage roles" ON public.user_roles;
+CREATE POLICY "Admins can manage roles" ON public.user_roles
 FOR ALL
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'))
@@ -202,26 +202,26 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for profiles
-CREATE POLICY "Users can view their own profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
+CREATE POLICY "Users can view their own profile" ON public.profiles
 FOR SELECT
 TO authenticated
 USING (user_id = auth.uid());
 
-CREATE POLICY "Users can update their own profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
+CREATE POLICY "Users can update their own profile" ON public.profiles
 FOR UPDATE
 TO authenticated
 USING (user_id = auth.uid());
 
-CREATE POLICY "Users can insert their own profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Users can insert their own profile" ON public.profiles;
+CREATE POLICY "Users can insert their own profile" ON public.profiles
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Admins can view all profiles"
-ON public.profiles
+DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
+CREATE POLICY "Admins can view all profiles" ON public.profiles
 FOR SELECT
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
@@ -270,29 +270,29 @@ CREATE TABLE IF NOT EXISTS public.invitations (
 ALTER TABLE public.invitations ENABLE ROW LEVEL SECURITY;
 
 -- Only admins can view invitations
-CREATE POLICY "Admins can view all invitations"
-ON public.invitations
+DROP POLICY IF EXISTS "Admins can view all invitations" ON public.invitations;
+CREATE POLICY "Admins can view all invitations" ON public.invitations
 FOR SELECT
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
 -- Only admins can create invitations
-CREATE POLICY "Admins can create invitations"
-ON public.invitations
+DROP POLICY IF EXISTS "Admins can create invitations" ON public.invitations;
+CREATE POLICY "Admins can create invitations" ON public.invitations
 FOR INSERT
 TO authenticated
 WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 -- Only admins can update invitations
-CREATE POLICY "Admins can update invitations"
-ON public.invitations
+DROP POLICY IF EXISTS "Admins can update invitations" ON public.invitations;
+CREATE POLICY "Admins can update invitations" ON public.invitations
 FOR UPDATE
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
 -- Only admins can delete invitations
-CREATE POLICY "Admins can delete invitations"
-ON public.invitations
+DROP POLICY IF EXISTS "Admins can delete invitations" ON public.invitations;
+CREATE POLICY "Admins can delete invitations" ON public.invitations
 FOR DELETE
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
@@ -315,14 +315,14 @@ CREATE TABLE IF NOT EXISTS public.activity_logs (
 ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
 
 -- Admins can view all activity logs
-CREATE POLICY "Admins can view all activity logs"
-ON public.activity_logs
+DROP POLICY IF EXISTS "Admins can view all activity logs" ON public.activity_logs;
+CREATE POLICY "Admins can view all activity logs" ON public.activity_logs
 FOR SELECT
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Allow service role to insert logs (for edge functions)
-CREATE POLICY "Service role can insert logs"
-ON public.activity_logs
+DROP POLICY IF EXISTS "Service role can insert logs" ON public.activity_logs;
+CREATE POLICY "Service role can insert logs" ON public.activity_logs
 FOR INSERT
 WITH CHECK (true);
 
@@ -336,21 +336,21 @@ CREATE INDEX IF NOT EXISTS idx_activity_logs_action ON public.activity_logs(acti
 -- Fix 1: Remove overly permissive portfolio_items policy and add admin-only modifications
 DROP POLICY IF EXISTS "Allow all operations for portfolio items" ON public.portfolio_items;
 
-CREATE POLICY "Admins can insert portfolio items" 
-ON public.portfolio_items 
+DROP POLICY IF EXISTS "Admins can insert portfolio items" ON public.portfolio_items;
+CREATE POLICY "Admins can insert portfolio items" ON public.portfolio_items 
 FOR INSERT 
 TO authenticated
 WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can update portfolio items" 
-ON public.portfolio_items 
+DROP POLICY IF EXISTS "Admins can update portfolio items" ON public.portfolio_items;
+CREATE POLICY "Admins can update portfolio items" ON public.portfolio_items 
 FOR UPDATE 
 TO authenticated
 USING (has_role(auth.uid(), 'admin'::app_role))
 WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can delete portfolio items" 
-ON public.portfolio_items 
+DROP POLICY IF EXISTS "Admins can delete portfolio items" ON public.portfolio_items;
+CREATE POLICY "Admins can delete portfolio items" ON public.portfolio_items 
 FOR DELETE 
 TO authenticated
 USING (has_role(auth.uid(), 'admin'::app_role));
@@ -358,21 +358,21 @@ USING (has_role(auth.uid(), 'admin'::app_role));
 -- Fix 2: Remove overly permissive pricing_packages policy and add admin-only modifications
 DROP POLICY IF EXISTS "Allow all operations for pricing packages" ON public.pricing_packages;
 
-CREATE POLICY "Admins can insert pricing packages" 
-ON public.pricing_packages 
+DROP POLICY IF EXISTS "Admins can insert pricing packages" ON public.pricing_packages;
+CREATE POLICY "Admins can insert pricing packages" ON public.pricing_packages 
 FOR INSERT 
 TO authenticated
 WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can update pricing packages" 
-ON public.pricing_packages 
+DROP POLICY IF EXISTS "Admins can update pricing packages" ON public.pricing_packages;
+CREATE POLICY "Admins can update pricing packages" ON public.pricing_packages 
 FOR UPDATE 
 TO authenticated
 USING (has_role(auth.uid(), 'admin'::app_role))
 WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can delete pricing packages" 
-ON public.pricing_packages 
+DROP POLICY IF EXISTS "Admins can delete pricing packages" ON public.pricing_packages;
+CREATE POLICY "Admins can delete pricing packages" ON public.pricing_packages 
 FOR DELETE 
 TO authenticated
 USING (has_role(auth.uid(), 'admin'::app_role));
@@ -382,20 +382,20 @@ DROP POLICY IF EXISTS "Allow upload to portfolio bucket" ON storage.objects;
 DROP POLICY IF EXISTS "Allow update portfolio images" ON storage.objects;
 DROP POLICY IF EXISTS "Allow delete portfolio images" ON storage.objects;
 
-CREATE POLICY "Admins can upload portfolio images" 
-ON storage.objects 
+DROP POLICY IF EXISTS "Admins can upload portfolio images" ON storage.objects;
+CREATE POLICY "Admins can upload portfolio images" ON storage.objects 
 FOR INSERT 
 TO authenticated
 WITH CHECK (bucket_id = 'portfolio' AND has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can update portfolio images" 
-ON storage.objects 
+DROP POLICY IF EXISTS "Admins can update portfolio images" ON storage.objects;
+CREATE POLICY "Admins can update portfolio images" ON storage.objects 
 FOR UPDATE 
 TO authenticated
 USING (bucket_id = 'portfolio' AND has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Admins can delete portfolio images" 
-ON storage.objects 
+DROP POLICY IF EXISTS "Admins can delete portfolio images" ON storage.objects;
+CREATE POLICY "Admins can delete portfolio images" ON storage.objects 
 FOR DELETE 
 TO authenticated
 USING (bucket_id = 'portfolio' AND has_role(auth.uid(), 'admin'::app_role));
@@ -407,16 +407,16 @@ DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON public.profiles;
 DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.profiles;
 
-CREATE POLICY "Users can view their own profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
+CREATE POLICY "Users can view their own profile" ON public.profiles
 FOR SELECT
 USING (auth.uid() = user_id);
 
 -- Fix activity_logs INSERT policy - restrict to service_role only
 DROP POLICY IF EXISTS "Service role can insert logs" ON public.activity_logs;
 
-CREATE POLICY "Service role can insert logs"
-ON public.activity_logs
+DROP POLICY IF EXISTS "Service role can insert logs" ON public.activity_logs;
+CREATE POLICY "Service role can insert logs" ON public.activity_logs
 FOR INSERT
 TO service_role
 WITH CHECK (true);
@@ -437,16 +437,16 @@ CREATE TABLE IF NOT EXISTS public.rate_limits (
 ALTER TABLE public.rate_limits ENABLE ROW LEVEL SECURITY;
 
 -- Only service_role can manage rate limits
-CREATE POLICY "Service role can manage rate limits"
-ON public.rate_limits
+DROP POLICY IF EXISTS "Service role can manage rate limits" ON public.rate_limits;
+CREATE POLICY "Service role can manage rate limits" ON public.rate_limits
 FOR ALL
 TO service_role
 USING (true)
 WITH CHECK (true);
 
 -- Add trigger for updated_at
-CREATE TRIGGER update_rate_limits_updated_at
-BEFORE UPDATE ON public.rate_limits
+DROP TRIGGER IF EXISTS update_rate_limits_updated_at ON public.rate_limits;
+CREATE TRIGGER update_rate_limits_updated_at BEFORE UPDATE ON public.rate_limits
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -598,24 +598,24 @@ CREATE TABLE IF NOT EXISTS public.orders (
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
 -- Policies for orders
-CREATE POLICY "Users can view their own orders"
-ON public.orders
+DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
+CREATE POLICY "Users can view their own orders" ON public.orders
 FOR SELECT
 USING (user_id = auth.uid() OR customer_email = (SELECT email FROM auth.users WHERE id = auth.uid()));
 
-CREATE POLICY "Anyone can create orders"
-ON public.orders
+DROP POLICY IF EXISTS "Anyone can create orders" ON public.orders;
+CREATE POLICY "Anyone can create orders" ON public.orders
 FOR INSERT
 WITH CHECK (true);
 
-CREATE POLICY "Service role can update orders"
-ON public.orders
+DROP POLICY IF EXISTS "Service role can update orders" ON public.orders;
+CREATE POLICY "Service role can update orders" ON public.orders
 FOR UPDATE
 USING (true)
 WITH CHECK (true);
 
-CREATE POLICY "Admins can view all orders"
-ON public.orders
+DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
+CREATE POLICY "Admins can view all orders" ON public.orders
 FOR SELECT
 USING (has_role(auth.uid(), 'admin'::app_role));
 
@@ -637,14 +637,14 @@ DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
 DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
 
 -- Create PERMISSIVE SELECT policies (so they work as OR)
-CREATE POLICY "Admins can view all orders" 
-ON public.orders 
+DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
+CREATE POLICY "Admins can view all orders" ON public.orders 
 FOR SELECT 
 TO authenticated
 USING (has_role(auth.uid(), 'admin'::app_role));
 
-CREATE POLICY "Users can view their own orders" 
-ON public.orders 
+DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
+CREATE POLICY "Users can view their own orders" ON public.orders 
 FOR SELECT 
 TO authenticated
 USING (
@@ -662,8 +662,8 @@ DROP POLICY IF EXISTS "Anyone can create orders" ON public.orders;
 
 -- Create a secure policy requiring authentication
 -- Users can only create orders for themselves (user_id must match auth.uid())
-CREATE POLICY "Authenticated users can create their own orders"
-ON public.orders
+DROP POLICY IF EXISTS "Authenticated users can create their own orders" ON public.orders;
+CREATE POLICY "Authenticated users can create their own orders" ON public.orders
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = auth.uid());
@@ -672,8 +672,8 @@ WITH CHECK (user_id = auth.uid());
 DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
 
 -- Create a more secure SELECT policy based on user_id only
-CREATE POLICY "Users can view their own orders"
-ON public.orders
+DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
+CREATE POLICY "Users can view their own orders" ON public.orders
 FOR SELECT
 TO authenticated
 USING (user_id = auth.uid());
@@ -682,8 +682,8 @@ USING (user_id = auth.uid());
 -- MIGRATION: 20260215120142_2c526d70-a42f-4fd1-bc2c-694c2874df41.sql
 ------------------------------------------
 -- Block anonymous access to orders table
-CREATE POLICY "Block anonymous access to orders"
-ON public.orders
+DROP POLICY IF EXISTS "Block anonymous access to orders" ON public.orders;
+CREATE POLICY "Block anonymous access to orders" ON public.orders
 FOR SELECT
 TO anon
 USING (false);
@@ -704,15 +704,15 @@ $$;
 DROP POLICY IF EXISTS "Admins can update any profile" ON public.profiles;
 DROP POLICY IF EXISTS "Admins can delete any profile" ON public.profiles;
 
-CREATE POLICY "Admins can update any profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Admins can update any profile" ON public.profiles;
+CREATE POLICY "Admins can update any profile" ON public.profiles
 FOR UPDATE
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'))
 WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
-CREATE POLICY "Admins can delete any profile"
-ON public.profiles
+DROP POLICY IF EXISTS "Admins can delete any profile" ON public.profiles;
+CREATE POLICY "Admins can delete any profile" ON public.profiles
 FOR DELETE
 TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
