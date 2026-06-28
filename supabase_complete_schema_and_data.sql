@@ -1,12 +1,12 @@
 -- ==========================================
--- BURNING PIXEL COMPLETE DATABASE SETUP
--- Generated: 2026-06-28T05:38:25.312Z
+-- BURNING PIXEL COMPLETE DATABASE SETUP (IDEMPOTENT)
+-- Generated: 2026-06-28T05:47:04.804Z
 -- ==========================================
 
 -- MIGRATION: 20251224141559_1876b551-3e8d-43a0-9575-1ea3a57785fc.sql
 ------------------------------------------
 -- Create pricing_packages table to store all pricing data
-CREATE TABLE public.pricing_packages (
+CREATE TABLE IF NOT EXISTS public.pricing_packages (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   price NUMERIC NOT NULL,
@@ -46,8 +46,8 @@ END;
 $$ LANGUAGE plpgsql SET search_path = public;
 
 -- Create trigger for automatic timestamp updates
-CREATE TRIGGER update_pricing_packages_updated_at
-BEFORE UPDATE ON public.pricing_packages
+DROP TRIGGER IF EXISTS update_pricing_packages_updated_at ON public.pricing_packages;
+CREATE TRIGGER update_pricing_packages_updated_at BEFORE UPDATE ON public.pricing_packages
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -67,7 +67,7 @@ WITH CHECK (true);
 INSERT INTO storage.buckets (id, name, public) VALUES ('portfolio', 'portfolio', true);
 
 -- Create portfolio_items table
-CREATE TABLE public.portfolio_items (
+CREATE TABLE IF NOT EXISTS public.portfolio_items (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   category TEXT NOT NULL,
@@ -131,10 +131,16 @@ EXECUTE FUNCTION public.update_updated_at_column();
 -- MIGRATION: 20251225233652_2076273e-b2c0-450a-971d-b714331d3113.sql
 ------------------------------------------
 -- Create app role enum
-CREATE TYPE public.app_role AS ENUM ('admin', 'moderator', 'user');
+DO $
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'app_role') THEN
+    CREATE TYPE public.app_role AS ENUM ('admin', 'moderator', 'user');
+  END IF;
+END;
+$;
 
 -- Create user_roles table
-CREATE TABLE public.user_roles (
+CREATE TABLE IF NOT EXISTS public.user_roles (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     role app_role NOT NULL,
@@ -182,7 +188,7 @@ USING (public.has_role(auth.uid(), 'admin'))
 WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 -- Create profiles table
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
     email TEXT,
@@ -221,8 +227,8 @@ TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
 -- Trigger for updated_at
-CREATE TRIGGER update_profiles_updated_at
-BEFORE UPDATE ON public.profiles
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON public.profiles;
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -240,14 +246,14 @@ END;
 $$;
 
 -- Trigger to create profile on signup
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- MIGRATION: 20251225234655_287a0a28-696f-4e0a-9dc3-22978b42760f.sql
 ------------------------------------------
 -- Create invitations table to track sent invitations
-CREATE TABLE public.invitations (
+CREATE TABLE IF NOT EXISTS public.invitations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL,
   invited_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
@@ -294,7 +300,7 @@ USING (public.has_role(auth.uid(), 'admin'));
 -- MIGRATION: 20251226001439_7dc58946-0a7a-40cb-a0ab-f6369912153a.sql
 ------------------------------------------
 -- Create activity_logs table to track user actions
-CREATE TABLE public.activity_logs (
+CREATE TABLE IF NOT EXISTS public.activity_logs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   user_email TEXT,
@@ -321,9 +327,9 @@ FOR INSERT
 WITH CHECK (true);
 
 -- Create index for faster queries
-CREATE INDEX idx_activity_logs_created_at ON public.activity_logs(created_at DESC);
-CREATE INDEX idx_activity_logs_user_id ON public.activity_logs(user_id);
-CREATE INDEX idx_activity_logs_action ON public.activity_logs(action);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON public.activity_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON public.activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_action ON public.activity_logs(action);
 
 -- MIGRATION: 20251230065901_cdb0e4d1-69a6-4164-a253-fa134410177e.sql
 ------------------------------------------
@@ -569,7 +575,7 @@ $$;
 -- MIGRATION: 20260109074700_46ca1847-e109-4a7a-8c8a-4ae3519e4f7a.sql
 ------------------------------------------
 -- Create orders table for tracking payments
-CREATE TABLE public.orders (
+CREATE TABLE IF NOT EXISTS public.orders (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
   package_id UUID REFERENCES public.pricing_packages(id),
@@ -614,15 +620,15 @@ FOR SELECT
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Add trigger for updated_at
-CREATE TRIGGER update_orders_updated_at
-BEFORE UPDATE ON public.orders
+DROP TRIGGER IF EXISTS update_orders_updated_at ON public.orders;
+CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Create index for faster lookups
-CREATE INDEX idx_orders_xendit_invoice_id ON public.orders(xendit_invoice_id);
-CREATE INDEX idx_orders_customer_email ON public.orders(customer_email);
-CREATE INDEX idx_orders_status ON public.orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_xendit_invoice_id ON public.orders(xendit_invoice_id);
+CREATE INDEX IF NOT EXISTS idx_orders_customer_email ON public.orders(customer_email);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(status);
 
 -- MIGRATION: 20260111080811_37edfc53-4b34-4f1b-b564-7fb7fad37b04.sql
 ------------------------------------------
