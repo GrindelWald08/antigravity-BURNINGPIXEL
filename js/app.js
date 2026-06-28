@@ -1,6 +1,6 @@
 // Supabase & Common Utility Configurations
-const SUPABASE_URL = "https://uwsjhtfwxdizxqunplcw.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3c2podGZ3eGRpenhxdW5wbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NzcyMzIsImV4cCI6MjA4MjE1MzIzMn0.aNbIAXb0PCYeUq0eOmPPmiT-1ANBJFVGhoBnsqWgrGs";
+const SUPABASE_URL = "https://wtdxhorkuiknosqjxjws.supabase.co";
+const SUPABASE_KEY = "sb_publishable_BTXZhl5zaJz9j3qq1jmBwQ_dicL_zIb";
 
 // Initialize Supabase Client
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
