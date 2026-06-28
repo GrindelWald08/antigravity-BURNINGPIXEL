@@ -15,8 +15,8 @@
     <div class="container nav-container">
       <a href="index.html" class="logo">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary)">
-           <path d="M16 2L6 12H26L16 2Z" fill="currentColor"/>
-           <path d="M6 14L16 24L26 14H6Z" fill="currentColor"/>
+          <path d="M16 2L6 12H26L16 2Z" fill="currentColor"/>
+          <path d="M6 14L16 24L26 14H6Z" fill="currentColor"/>
         </svg>
         <span>BurningPixel <small style="font-size: 0.6rem; color: var(--primary); font-weight: 700; border: 1px solid var(--primary); padding: 0.1rem 0.3rem; border-radius: 0.2rem; margin-left: 0.25rem;">ADMIN</small></span>
       </a>
@@ -39,7 +39,7 @@
     <div class="dashboard-header animate-fade-up">
       <div>
         <h1>Portal Pengelolaan Bisnis</h1>
-        <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem;">Monitor transaksi masuk, kelola portofolio showcase, dan sesuaikan paket harga</p>
+        <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem;">Monitor transaksi masuk, kelola portofolio showcase, sesuaikan paket harga, dan atur peran pengguna</p>
       </div>
     </div>
     
@@ -61,6 +61,10 @@
         <button class="db-tab-btn" data-target="admin-packages">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           Kelola Paket Layanan
+        </button>
+        <button class="db-tab-btn" data-target="admin-users">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Kelola Pengguna
         </button>
       </div>
       
@@ -110,7 +114,10 @@
         
         <!-- Orders Tab -->
         <div id="admin-orders" class="db-tab-content" style="display: none;">
-          <h2 class="dashboard-title-sm">Daftar Semua Pesanan Client</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 class="dashboard-title-sm" style="margin-bottom: 0;">Daftar Semua Pesanan Client</h2>
+            <button class="btn btn-primary btn-sm" id="btn-add-invoice">+ Buat Invoice Manual</button>
+          </div>
           <div class="table-responsive">
             <table>
               <thead>
@@ -156,11 +163,11 @@
             </table>
           </div>
 
-          <!-- Add Portfolio Modal -->
+          <!-- Add/Edit Portfolio Modal -->
           <div class="modal" id="portfolio-modal">
             <div class="modal-content">
               <button class="modal-close" id="portfolio-modal-close">&times;</button>
-              <h2>Tambah Portofolio</h2>
+              <h2 id="portfolio-modal-title">Tambah Portofolio</h2>
               <p class="modal-desc">Lengkapi informasi proyek di bawah ini.</p>
               
               <form id="portfolio-form">
@@ -224,11 +231,11 @@
             </table>
           </div>
 
-          <!-- Add Package Modal -->
+          <!-- Add/Edit Package Modal -->
           <div class="modal" id="package-modal">
             <div class="modal-content" style="max-width: 600px;">
               <button class="modal-close" id="package-modal-close">&times;</button>
-              <h2>Tambah Paket Harga Baru</h2>
+              <h2 id="package-modal-title">Tambah Paket Harga Baru</h2>
               <p class="modal-desc">Atur nama, rincian biaya, dan fitur untuk paket layanan website.</p>
               
               <form id="package-form">
@@ -268,10 +275,80 @@
             </div>
           </div>
         </div>
+
+        <!-- Users Tab -->
+        <div id="admin-users" class="db-tab-content" style="display: none;">
+          <h2 class="dashboard-title-sm">Kelola Pengguna & Hak Akses</h2>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal Terdaftar</th>
+                  <th>Nama Lengkap</th>
+                  <th>Email</th>
+                  <th>Peran (Role)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-body">
+                <!-- Users list loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
         
       </div>
     </div>
   </div>
+
+  <!-- Create Invoice Modal -->
+  <div class="modal" id="invoice-modal">
+    <div class="modal-content" style="max-width: 550px;">
+      <button class="modal-close" id="invoice-modal-close">&times;</button>
+      <h2>Buat Invoice Manual</h2>
+      <p class="modal-desc">Membuat pesanan manual untuk klien. Midtrans Snap token akan di-generate otomatis jika memilih metode Midtrans.</p>
+      
+      <form id="invoice-form">
+        <div class="form-group">
+          <label for="inv-cust-name">Nama Klien</label>
+          <input type="text" id="inv-cust-name" class="form-control" placeholder="Contoh: Budi Santoso" required>
+        </div>
+        <div class="form-group">
+          <label for="inv-cust-email">Email Klien</label>
+          <input type="email" id="inv-cust-email" class="form-control" placeholder="budi@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="inv-cust-phone">Nomor Telepon Klien (Optional)</label>
+          <input type="tel" id="inv-cust-phone" class="form-control" placeholder="081234567890">
+        </div>
+        <div class="form-group">
+          <label for="inv-package">Pilih Paket Layanan</label>
+          <select id="inv-package" class="form-control" required>
+            <!-- Loaded dynamically from packages -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inv-amount">Total Investasi (IDR)</label>
+          <input type="number" id="inv-amount" class="form-control" placeholder="1500000" required>
+        </div>
+        <div class="form-group">
+          <label for="inv-payment-method">Metode Pembayaran</label>
+          <select id="inv-payment-method" class="form-control" required>
+            <option value="Midtrans">Midtrans (Bank Transfer/E-Wallet)</option>
+            <option value="Manual Transfer">Transfer Bank Manual (Langsung Lunas)</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary form-submit-btn" id="invoice-submit-btn">Buat Invoice</button>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 
   <script src="js/app.js"></script>
   <script src="js/admin.js"></script>
