@@ -1,6 +1,6 @@
 -- ==========================================
 -- BURNING PIXEL COMPLETE DATABASE SETUP (IDEMPOTENT)
--- Generated: 2026-06-28T05:54:23.704Z
+-- Generated: 2026-06-28T05:58:02.353Z
 -- ==========================================
 
 -- MIGRATION: 20251224141559_1876b551-3e8d-43a0-9575-1ea3a57785fc.sql
@@ -64,7 +64,7 @@ WITH CHECK (true);
 -- MIGRATION: 20251224142259_e3e514be-c74b-4f0e-af2f-678ff136287b.sql
 ------------------------------------------
 -- Create storage bucket for portfolio images
-INSERT INTO storage.buckets (id, name, public) VALUES ('portfolio', 'portfolio', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('portfolio', 'portfolio', true) ON CONFLICT (id) DO NOTHING;
 
 -- Create portfolio_items table
 CREATE TABLE IF NOT EXISTS public.portfolio_items (
