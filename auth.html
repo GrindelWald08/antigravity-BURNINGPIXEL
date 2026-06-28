@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - Burning Pixel</title>
+  
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="index.html" class="auth-logo">
+          <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary); vertical-align: middle;">
+            <path d="M16 2L6 12H26L16 2Z" fill="currentColor"/>
+            <path d="M6 14L16 24L26 14H6Z" fill="currentColor"/>
+          </svg>
+          <span>BurningPixel</span>
+        </a>
+        
+        <!-- Toggle Titles -->
+        <div id="login-header">
+          <h1>Sign In Ke Akun</h1>
+          <p>Masukkan alamat email dan kata sandi Anda</p>
+        </div>
+        <div id="register-header" style="display: none;">
+          <h1>Buat Akun Baru</h1>
+          <p>Mulai perjalanan digital bisnis Anda hari ini</p>
+        </div>
+        <div id="forgot-header" style="display: none;">
+          <h1>Lupa Kata Sandi</h1>
+          <p>Masukkan email Anda untuk menerima link reset</p>
+        </div>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Alamat Email</label>
+          <input type="email" id="login-email" class="form-control" placeholder="nama@email.com" required>
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label style="margin-bottom: 0;">Kata Sandi</label>
+            <a href="#" id="go-forgot" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Lupa sandi?</a>
+          </div>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary form-submit-btn" id="login-submit-btn">Sign In</button>
+      </form>
+      
+      <!-- Register Form -->
+      <form id="register-form" style="display: none;">
+        <div class="form-group">
+          <label for="reg-name">Nama Lengkap</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="Masukkan nama lengkap Anda" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Alamat Email</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="nama@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Kata Sandi</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary form-submit-btn" id="register-submit-btn">Daftar Akun</button>
+      </form>
+
+      <!-- Forgot Password Form -->
+      <form id="forgot-form" style="display: none;">
+        <div class="form-group">
+          <label for="forgot-email">Alamat Email</label>
+          <input type="email" id="forgot-email" class="form-control" placeholder="nama@email.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit-btn" id="forgot-submit-btn">Kirim Link Reset</button>
+      </form>
+
+      <!-- Footer navigation -->
+      <div class="auth-footer">
+        <span id="login-footer">
+          Belum punya akun? <a href="#" id="go-register">Daftar Sekarang</a>
+        </span>
+        <span id="register-footer" style="display: none;">
+          Sudah punya akun? <a href="#" id="go-login">Sign In</a>
+        </span>
+        <span id="forgot-footer" style="display: none;">
+          Kembali ke halaman <a href="#" id="go-login-back">Sign In</a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

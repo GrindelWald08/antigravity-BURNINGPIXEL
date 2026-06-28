@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun Saya - Burning Pixel</title>
+  
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Header & Navbar -->
+  <header class="scrolled">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary)">
+          <path d="M16 2L6 12H26L16 2Z" fill="currentColor"/>
+          <path d="M6 14L16 24L26 14H6Z" fill="currentColor"/>
+        </svg>
+        <span>BurningPixel</span>
+      </a>
+      
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776;</button>
+      
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#tentang">Tentang</a></li>
+        <li><a href="index.html#layanan">Layanan</a></li>
+        <li><a href="index.html#harga">Harga</a></li>
+        <li><a href="index.html#portofolio">Portofolio</a></li>
+        <li><button id="header-signout-btn" class="btn btn-secondary btn-sm">Sign Out</button></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Account Portal Dashboard -->
+  <div class="dashboard container">
+    <div class="dashboard-header animate-fade-up">
+      <div>
+        <h1>Dashboard Pengguna</h1>
+        <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem;">Kelola info profil dan lihat transaksi pembelian Anda</p>
+      </div>
+      <div style="font-size: 0.9rem;">
+        Halo, <span id="user-email-display" style="font-weight: 700; color: var(--primary);">User</span>
+      </div>
+    </div>
+    
+    <div class="dashboard-grid animate-fade-up" style="animation-delay: 0.1s;">
+      <!-- Sidebar Navigation -->
+      <div class="dashboard-sidebar">
+        <button class="db-tab-btn active" data-target="profile-tab">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Pengaturan Profil
+        </button>
+        <button class="db-tab-btn" data-target="orders-tab">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><polygon points="12 22.08 12 12 3 6.92 3 17.08 12 22.08"></polygon><polygon points="12 22.08 21 17.08 21 6.92 12 12 12 22.08"></polygon><polygon points="12 12 21 6.92 12 1.84 3 6.92 12 12"></polygon></svg>
+          Riwayat Pesanan
+        </button>
+      </div>
+      
+      <!-- Content Box -->
+      <div class="dashboard-content-box">
+        
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="db-tab-content">
+          <h2 class="dashboard-title-sm">Ubah Profil</h2>
+          <form id="update-profile-form" style="margin-bottom: 3rem;">
+            <div class="form-group">
+              <label for="profile-name">Nama Lengkap</label>
+              <input type="text" id="profile-name" class="form-control" placeholder="Nama Anda" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="profile-submit-btn">Simpan Nama</button>
+          </form>
+          
+          <h2 class="dashboard-title-sm" style="border-top: 1px solid var(--card-border); padding-top: 2rem;">Ganti Kata Sandi</h2>
+          <form id="update-password-form">
+            <div class="form-group">
+              <label for="new-password">Kata Sandi Baru</label>
+              <input type="password" id="new-password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label for="confirm-password">Konfirmasi Kata Sandi Baru</label>
+              <input type="password" id="confirm-password" class="form-control" placeholder="Ketik ulang kata sandi baru" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary" id="password-submit-btn">Ubah Password</button>
+          </form>
+        </div>
+        
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="db-tab-content" style="display: none;">
+          <h2 class="dashboard-title-sm">Riwayat Pembelian</h2>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Paket</th>
+                  <th>Jumlah</th>
+                  <th>Metode</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--muted); padding: 3rem 0;">
+                    <div class="animate-spin" style="border: 2px solid var(--primary); border-top-color: transparent; border-radius: 50%; width: 20px; height: 20px; display: inline-block; animation: spin 1s linear infinite;"></div>
+                    <p style="margin-top: 0.5rem;">Memuat daftar transaksi...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script src="js/app.js"></script>
+  <script src="js/account.js"></script>
+</body>
+</html>

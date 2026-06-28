@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Pesanan - Burning Pixel</title>
+  
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Header & Navbar -->
+  <header class="scrolled">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary)">
+          <path d="M16 2L6 12H26L16 2Z" fill="currentColor"/>
+          <path d="M6 14L16 24L26 14H6Z" fill="currentColor"/>
+        </svg>
+        <span>BurningPixel</span>
+      </a>
+      
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776;</button>
+      
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#tentang">Tentang</a></li>
+        <li><a href="index.html#layanan">Layanan</a></li>
+        <li><a href="index.html#harga">Harga</a></li>
+        <li><a href="index.html#portofolio">Portofolio</a></li>
+        <li><a href="account.html" class="btn btn-outline btn-sm">Akun Saya</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Main Content Order Detail -->
+  <div class="dashboard container" style="max-width: 800px;">
+    <div class="dashboard-header animate-fade-up">
+      <div>
+        <h1>Detail Transaksi</h1>
+        <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem;" id="order-subtitle">Invoice ID: Loading...</p>
+      </div>
+    </div>
+    
+    <div class="dashboard-content-box animate-fade-up" style="animation-delay: 0.1s;" id="invoice-print-area">
+      <!-- Loading State -->
+      <div id="order-loading" style="text-align: center; color: var(--muted); padding: 3rem 0;">
+        <div class="animate-spin" style="border: 2px solid var(--primary); border-top-color: transparent; border-radius: 50%; width: 24px; height: 24px; display: inline-block; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 1rem;">Mengambil data pesanan...</p>
+      </div>
+      
+      <!-- Content State (Hidden initially) -->
+      <div id="order-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--card-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3 id="order-package" style="font-size: 1.5rem; font-weight: 800; color: var(--foreground);">Nama Paket</h3>
+            <p style="font-size: 0.9rem; color: var(--muted); margin-top: 0.25rem;">Dipesan pada: <span id="order-date">-</span></p>
+          </div>
+          <div>
+            <span class="status-badge" id="order-status-badge" style="font-size: 0.9rem; padding: 0.4rem 1rem;">PENDING</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="padding: 1.25rem; border-radius: 0.5rem; background: rgba(255,255,255,0.01); border: 1px solid var(--card-border);">
+            <h4 style="font-size: 0.9rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.75rem;">Informasi Pelanggan</h4>
+            <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <div><strong>Nama:</strong> <span id="cust-name-val">-</span></div>
+              <div><strong>Email:</strong> <span id="cust-email-val">-</span></div>
+              <div><strong>WhatsApp:</strong> <span id="cust-phone-val">-</span></div>
+            </div>
+          </div>
+          
+          <div style="padding: 1.25rem; border-radius: 0.5rem; background: rgba(255,255,255,0.01); border: 1px solid var(--card-border);">
+            <h4 style="font-size: 0.9rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.75rem;">Rincian Pembayaran</h4>
+            <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <div><strong>Metode:</strong> <span id="pay-method-val">-</span></div>
+              <div><strong>Waktu Lunas:</strong> <span id="pay-time-val">-</span></div>
+              <div><strong>Invoice Link:</strong> <span id="pay-invoice-val">-</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 1.5rem; border-radius: 0.5rem; background: rgba(20, 184, 166, 0.05); border: 1px solid rgba(20, 184, 166, 0.2); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <span style="font-weight: 600; font-size: 1rem;">Total Investasi Layanan</span>
+          <span id="order-amount-val" style="font-weight: 800; color: var(--primary); font-size: 1.5rem;">Rp 0</span>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;" class="no-print">
+          <button class="btn btn-outline" id="btn-print-receipt">Cetak Invoice</button>
+          <a href="/account" class="btn btn-primary">Kembali ke Dashboard</a>
+        </div>
+      </div>
+      
+      <!-- Error State -->
+      <div id="order-error" style="display: none; text-align: center; color: #dc2626; padding: 3rem 0;">
+        <p style="font-size: 1.1rem; font-weight: 600;">Pesanan Tidak Ditemukan</p>
+        <p style="font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem;">Kami tidak dapat menemukan transaksi dengan ID tersebut.</p>
+        <a href="/account" class="btn btn-secondary btn-sm" style="margin-top: 1.5rem;">Kembali ke Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      header, .no-print {
+        display: none !important;
+      }
+      .dashboard {
+        padding-top: 20px !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      .dashboard-content-box {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        color: black !important;
+      }
+      #order-amount-val {
+        color: black !important;
+      }
+      td, th {
+        color: black !important;
+        border-bottom: 1px solid #ddd !important;
+      }
+      .status-badge {
+        border: 1px solid black !important;
+        background: transparent !important;
+        color: black !important;
+      }
+    }
+  </style>
+
+  <script src="js/app.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>

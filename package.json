@@ -1,0 +1,14 @@
+{
+  "name": "burningpixel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Burning Pixel - Jasa Pembuatan Website Profesional",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
